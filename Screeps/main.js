@@ -6,11 +6,11 @@ const config = require('./config');
 
 module.exports.loop = function () {
 
-config.roles.forEach(roleConfig => {
-    const role = roleConfig.role;
+for (const role in config.roles) {
+    const roleConfig = config.roles[role];
     const creepsOfType = _.filter(Game.creeps, creep => creep.memory.role === role);
-    console.log(`${role}s: ${creepsOfType.length}`);
-
+     console.log(`${role}s: ${creepsOfType.length}`);
+    
     if (creepsOfType.length < roleConfig.pop) {
         const newName = `${role.charAt(0).toUpperCase()}${role.slice(1)}${Game.time}`;
         console.log(`Spawning new ${role}: ${newName}`);
@@ -18,8 +18,8 @@ config.roles.forEach(roleConfig => {
             memory: { role: role }
         });
     }
-});
-
+}
+    
 if (Game.spawns['Spawn1'].spawning) {
     const spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
     Game.spawns['Spawn1'].room.visual.text(
