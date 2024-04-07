@@ -1,24 +1,23 @@
 var roleBuilder = {
-
     /** @param {Creep} creep **/
-    run: function(creep){
-        //find things to build 
-        var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
-
-        if (sites.length > 0) {
-            if (creep.build(sites[0]) ===ERR_NOT_IN_RANGE) {
-                creep.moveTo(sites[0]);
+    run: function(creep) {
+        // Check if empty
+        if(creep.store.getFreeCapacity() > 0) {
+            var sources = creep.room.find(FIND_SOURCES);
+            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
             }
-        } else if (creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
-            // Find the nearest energy source
-            var energySource = creep.pos.findClosestByPath(FIND_SOURCES);
-            // Move to the energy source and harvest it
-            if (creep.harvest(energySource) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(energySource);
+        } else {
+            // Find construction sites
+            var constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+            if (constructionSite) {
+                // Build 
+                if (creep.build(constructionSite) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(constructionSite);
+                }
             }
         }
-        }
+    }
+};
 
-    };
-
-module.exports = roleBuilder
+module.exports = roleBuilder;
