@@ -2,16 +2,20 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 const config = require('./config');
-
+let previousCounts = {};
 
 module.exports.loop = function () {
 
 for (const role in config.roles) {
     const roleConfig = config.roles[role];
     const creepsOfType = _.filter(Game.creeps, creep => creep.memory.role === role);
-     console.log(`${role}s: ${creepsOfType.length}`);
-    
-    if (creepsOfType.length < roleConfig.pop) {
+    const currentCount = creepsOfType.length; 
+    if (currentCount !== previousCounts[role]) {
+        console.log(`${role}s: ${currentCount}`);
+        // Update the previous count
+        previousCounts[role] = currentCount;
+    }
+    if (currentCount < roleConfig.pop) {
         const newName = `${role.charAt(0).toUpperCase()}${role.slice(1)}${Game.time}`;
         console.log(`Spawning new ${role}: ${newName}`);
         Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName, {
@@ -39,5 +43,8 @@ if (Game.spawns['Spawn1'].spawning) {
         if(creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         }
+        if(creep.memory.role == 'builder') {
+            rolebuilder.run(creep);
+        }
     }
-}
+};
